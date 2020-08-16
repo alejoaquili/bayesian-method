@@ -43,6 +43,7 @@ def classify(matrix_to_classify, probability_for_classes, probability_of_class):
     for current_class in class_predictions.keys():
         if class_predictions[current_class] >= max_probability:
             class_inference = current_class
+            max_probability = class_predictions[current_class]
     return class_inference
 
 
