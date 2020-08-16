@@ -47,14 +47,24 @@ def classify(matrix_to_classify, probability_for_classes, probability_of_class):
     return class_inference
 
 
-def get_class_prediction(input_data, current_class, probability_for_classes, probability_of_class):
+def equal_comparison(expected_value, current_value):
+    return expected_value == current_value
+
+
+def get_class_prediction(input_data, current_class, probability_for_classes, probability_of_class,
+                         comparison_function=equal_comparison):
     cols = len(input_data)
     current_probability = 1
     for i in range(0, cols):
-        if input_data[i] == 1:
+        if comparison_function(input_data[i], 1):
             variable_probability = probability_for_classes[current_class][i]
             current_probability *= variable_probability
         else:
             variable_probability = 1 - probability_for_classes[current_class][i]
             current_probability *= variable_probability
     return current_probability * probability_of_class[current_class]
+
+
+def apply_comparison_function(expected_value, current_value, function):
+    return function(expected_value, current_value)
+
