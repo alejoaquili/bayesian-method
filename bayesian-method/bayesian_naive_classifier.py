@@ -2,9 +2,9 @@ import numpy as np
 
 
 def bayesian_classifier(training_matrix, matrix_to_classify):
-    columns = training_matrix.shape[1] - 1
     rows = training_matrix.shape[0]
-    sorted_matrix = training_matrix[training_matrix[:,columns].argsort()]
+    columns = training_matrix.shape[1] - 1
+    sorted_matrix = training_matrix[training_matrix[:, columns].argsort()]
     current_class = sorted_matrix[0, columns]
     start_row = 0
     probabilities_for_classes = {}
@@ -44,20 +44,22 @@ def get_class_quantity(sorted_matrix):
     return class_quantity
 
 
-def classify(matrix_to_classify, probability_for_classes, probability_of_class):
+def classify(matrix_to_classify, probability_for_classes, probability_of_classes):
     rows = len(matrix_to_classify)
     class_predictions = {}
+    class_inferences = []
     for i in range(0, rows):
-        for current_class in probability_of_class.keys():
+        for current_class in probability_of_classes.keys():
             class_predictions[current_class] = get_class_prediction(matrix_to_classify[i], current_class,
-                                                                    probability_for_classes, probability_of_class)
-    max_probability = 0
-    class_inference = None
-    for current_class in class_predictions.keys():
-        if class_predictions[current_class] >= max_probability:
-            class_inference = current_class
-            max_probability = class_predictions[current_class]
-    return class_inference
+                                                                    probability_for_classes, probability_of_classes)
+        max_probability = 0
+        class_inference = None
+        for current_class in class_predictions.keys():
+            if class_predictions[current_class] >= max_probability:
+                class_inference = current_class
+                max_probability = class_predictions[current_class]
+        class_inferences.append(class_inference)
+    return class_inferences
 
 
 def equal_comparison(expected_value, current_value):
