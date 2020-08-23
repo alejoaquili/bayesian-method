@@ -1,5 +1,6 @@
 from models.token_counter import TokenCounter
 from utils.metrics import calculate_confusion_matrix
+from models.classifier_metrics import ClassifierMetrics
 
 
 class NewsClassifier:
@@ -66,9 +67,9 @@ class NewsClassifier:
                     max_probability_class = current_class
             inferences.append(max_probability_class)
         if generate_metrics:
-            confusion_matrix = calculate_confusion_matrix(inferences, expected_classes,
-                                                          self.probabilities_of_classes.keys())
-            return inferences, confusion_matrix
+            metrics = ClassifierMetrics()
+            metrics.calculate_all_metrics(inferences, expected_classes, self.probabilities_of_classes.keys())
+            return inferences, metrics
         return inferences
 
     def get_class_quantity(self, sorted_matrix):
