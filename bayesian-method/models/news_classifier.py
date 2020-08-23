@@ -22,8 +22,6 @@ class NewsClassifier:
         rows = training_matrix.shape[0]
         columns = training_matrix.shape[1] - 1
         sorted_matrix = training_matrix[training_matrix[:, columns].argsort()]
-        sorted_matrix = training_matrix[training_matrix[:, columns].argsort()]
-
         current_class = sorted_matrix[0, columns]
         start_row = 0
         self.get_class_quantity(sorted_matrix)
@@ -49,17 +47,17 @@ class NewsClassifier:
             raise ValueError('Cannot generate metrics of a unsupervised classification')
 
         rows = len(news_matrix)
-        columns = len(news_matrix[0])
+        # columns = len(news_matrix[0])
         inferences = []
         for current_class in self.probabilities_of_classes.keys():
-            probabilities_for_new = [self.calculate_probability_of_titles(current_class, news_matrix[:, 1])]
+            probabilities_for_news = [self.calculate_probability_of_titles(current_class, news_matrix[:, 1])]
             # probabilities_for_new.append(self.calculate_probability_of_source(current_class, news_matrix[:, 1]))
-            self.probabilities_for_classes[current_class] = probabilities_for_new
+            self.probabilities_for_classes[current_class] = probabilities_for_news
         for row in range(0, rows):
             max_probability = 0
             max_probability_class = None
             for current_class in self.probabilities_of_classes.keys():
-                current_probability = self.probabilities_for_classes[current_class][row][0] * \
+                current_probability = self.probabilities_for_classes[current_class][0][row] * \
                                       self.probabilities_of_classes[current_class]
                                       # self.probabilities_for_classes[current_class][row][1] * \
                 if current_probability > max_probability:

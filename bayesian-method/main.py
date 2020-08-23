@@ -21,4 +21,7 @@ column = np.transpose
 extra_column = training_target.reshape(len(training_target), 1)
 training_news = np.append(training_news, extra_column, axis=1)
 news_classifier.train(training_news)
-print(news_classifier.classify(np.asarray([["10/10/10","Los cambios en las notificaciones de WhatsApp que le pueden generar un dolor de cabeza a los usuarios", "TycSports"]]), ["Deportes"]))
+result = news_classifier.classify(test_news, test_target)
+print(result)
+
+# print(news_classifier.classify(np.asarray([["10/10/10","Los cambios en las notificaciones de WhatsApp que le pueden generar un dolor de cabeza a los usuarios", "TycSports"]]), ["Deportes"]))
