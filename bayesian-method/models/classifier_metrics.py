@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.integrate import trapz
 
 
 class ClassifierMetrics:
@@ -169,14 +170,17 @@ class ClassifierMetrics:
 
     @staticmethod
     def plot_roc_curves(roc_point, current_class, curve_path=None):
+        auc = trapz([0, roc_point[1], 1], [0, roc_point[0], 1])
+        legend = "ROC Curve (AUC = {:.4f})".format(auc)
         plt.subplots()
         plt.plot([(0, 0), (1, 1)], color='black', linewidth=1, linestyle='--')
-        plt.scatter(roc_point[0], roc_point[1], marker='o', s=30, facecolor='blue', edgecolor='blue', label='ROC Point')
+        plt.plot([0, roc_point[0], 1], [0, roc_point[1], 1], color='blue', linewidth=1)
+        plt.scatter(roc_point[0], roc_point[1], marker='o', s=30, facecolor='blue', edgecolor='blue', label=legend)
         plt.ylim(0, 1)
         plt.xlim(0, 1)
         plt.title("{} - ROC Curve".format(current_class))
-        plt.xlabel("False positive rate (FP)")
-        plt.ylabel("True positive rate (TP)")
+        plt.xlabel("False positive rate (FP Rate)")
+        plt.ylabel("True positive rate (TP Rate)")
         plt.grid()
         plt.legend(loc="lower right")
         if curve_path is not None:
