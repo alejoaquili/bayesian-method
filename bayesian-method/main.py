@@ -25,3 +25,4 @@ result = news_classifier.classify(test_news, test_target)
 print(result)
 
 # print(news_classifier.classify(np.asarray([["10/10/10","Los cambios en las notificaciones de WhatsApp que le pueden generar un dolor de cabeza a los usuarios", "TycSports"]]), ["Deportes"]))
+# TODO: metric, source, ignore words.
