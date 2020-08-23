@@ -1,5 +1,4 @@
 from models.token_counter import TokenCounter
-from utils.metrics import calculate_confusion_matrix
 from models.classifier_metrics import ClassifierMetrics
 
 
