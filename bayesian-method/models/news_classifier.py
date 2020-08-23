@@ -22,6 +22,8 @@ class NewsClassifier:
         rows = training_matrix.shape[0]
         columns = training_matrix.shape[1] - 1
         sorted_matrix = training_matrix[training_matrix[:, columns].argsort()]
+        sorted_matrix = training_matrix[training_matrix[:, columns].argsort()]
+
         current_class = sorted_matrix[0, columns]
         start_row = 0
         self.get_class_quantity(sorted_matrix)
