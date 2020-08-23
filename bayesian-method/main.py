@@ -35,6 +35,7 @@ print(metrics.accuracy)
 print(metrics.precision)
 print(metrics.f1_score)
 print(metrics.matthews_correlation_coefficient)
+print(metrics.roc_point)
 
 
 

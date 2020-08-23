@@ -16,6 +16,7 @@ class ClassifierMetrics:
         self.matthews_correlation_coefficient = {}
         self.estimated_classifier_error = None
         self.estimated_classifier_error_relative = None
+        self.roc_point = {}
 
     def calculate_confusion_matrix(self, inferences, expected_values, classes, heatmap_path=None):
         indexes_of_classes = np.empty(len(classes), dtype=object)
@@ -30,8 +31,7 @@ class ClassifierMetrics:
                 confusion_matrix[row + 1][col + 1] = self.get_value_of_cell(inferences, expected_values,
                                                                             indexes_of_classes[row],
                                                                             indexes_of_classes[col])
-        if heatmap_path is not None:
-            self.plot_confusion_matrix_heatmap(confusion_matrix, heatmap_path)
+        self.plot_confusion_matrix_heatmap(confusion_matrix, heatmap_path)
         return confusion_matrix
 
     @staticmethod
@@ -53,7 +53,10 @@ class ClassifierMetrics:
         ax.set_ylabel('Ground Truth label')
         ax.set_xlabel('Predicted label')
         fig.tight_layout()
-        plt.savefig(heatmap_path + "/confusion_matrix_heatmap.png", format="png")
+        if heatmap_path is not None:
+            plt.savefig(heatmap_path + "/confusion_matrix_heatmap.png", format="png")
+        else:
+            plt.show()
 
     @staticmethod
     def get_value_of_cell(inferences, expected_values, actual_class, current_classification):
@@ -132,14 +135,15 @@ class ClassifierMetrics:
         return error
 
     @staticmethod
-    def calculate_classifier_error_relaitve(confusion_matrix):
+    def calculate_classifier_error_relative(confusion_matrix):
         total = np.sum(confusion_matrix[1:, 1:])
         error = total
         for i in range(1, len(confusion_matrix)):
             error -= confusion_matrix[i][i]
         return error / total
 
-    def calculate_matthews_correlation_coefficient(self, current_class, confusion_matrix):
+    @staticmethod
+    def calculate_matthews_correlation_coefficient(current_class, confusion_matrix):
         # MCC = (TP * TN - FP * FN) / ( (TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))^(1/2)
         class_row = ClassifierMetrics.get_class_row(current_class, confusion_matrix)
         total = np.sum(confusion_matrix[1:, 1:])
@@ -163,6 +167,23 @@ class ClassifierMetrics:
                 class_row = row
         return class_row
 
+    @staticmethod
+    def plot_roc_curves(roc_point, current_class, curve_path=None):
+        plt.subplots()
+        plt.plot([(0, 0), (1, 1)], color='black', linewidth=1, linestyle='--')
+        plt.scatter(roc_point[0], roc_point[1], marker='o', s=30, facecolor='blue', edgecolor='blue', label='ROC Point')
+        plt.ylim(0, 1)
+        plt.xlim(0, 1)
+        plt.title("{} - ROC Curve".format(current_class))
+        plt.xlabel("False positive rate (FP)")
+        plt.ylabel("True positive rate (TP)")
+        plt.grid()
+        plt.legend(loc="lower right")
+        if curve_path is not None:
+            plt.savefig(curve_path + "/{} - ROC Curve.png".format(current_class), format="png")
+        else:
+            plt.show()
+
     def calculate_all_metrics(self, inferences, expected_values, classes_dict, output_folder=None):
         classes = []
         for current_class in classes_dict:
@@ -170,7 +191,7 @@ class ClassifierMetrics:
         self.classes = classes
         self.confusion_matrix = self.calculate_confusion_matrix(inferences, expected_values, classes, output_folder)
         self.estimated_classifier_error = self.calculate_classifier_error(self.confusion_matrix)
-        self.estimated_classifier_error_relative = self.calculate_classifier_error_relaitve(self.confusion_matrix)
+        self.estimated_classifier_error_relative = self.calculate_classifier_error_relative(self.confusion_matrix)
         for current_class in classes:
             self.true_positives_rate[current_class] = self.calculate_true_positives_rate(current_class,
                                                                                          self.confusion_matrix)
@@ -182,5 +203,8 @@ class ClassifierMetrics:
             self.f1_score[current_class] = self.calculate_f1_score(current_class, self.confusion_matrix)
             self.matthews_correlation_coefficient[current_class] = \
                 self.calculate_matthews_correlation_coefficient(current_class, self.confusion_matrix)
+            self.roc_point[current_class] = (self.false_positives_rate[current_class],
+                                             self.true_positives_rate[current_class])
+            self.plot_roc_curves(self.roc_point[current_class], current_class, output_folder)
 
 
