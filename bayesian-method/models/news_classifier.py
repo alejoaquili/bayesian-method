@@ -40,7 +40,7 @@ class NewsClassifier:
         # TODO: process news sources too
         self.trained = True
 
-    def classify(self, news_matrix, expected_classes=None, generate_metrics=False):
+    def classify(self, news_matrix, expected_classes=None, generate_metrics=False, output_path=None):
         if not self.trained:
             raise Exception('Cannot classify without training')
 
@@ -67,7 +67,8 @@ class NewsClassifier:
             inferences.append(max_probability_class)
         if generate_metrics:
             metrics = ClassifierMetrics()
-            metrics.calculate_all_metrics(inferences, expected_classes, self.probabilities_of_classes.keys())
+            metrics.calculate_all_metrics(inferences, expected_classes, self.probabilities_of_classes.keys(),
+                                          output_folder=output_path)
             return inferences, metrics
         return inferences
 

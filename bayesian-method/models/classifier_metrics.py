@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 class ClassifierMetrics:
@@ -15,7 +17,7 @@ class ClassifierMetrics:
         self.estimated_classifier_error = None
         self.estimated_classifier_error_relative = None
 
-    def calculate_confusion_matrix(self, inferences, expected_values, classes):
+    def calculate_confusion_matrix(self, inferences, expected_values, classes, heatmap_path=None):
         indexes_of_classes = np.empty(len(classes), dtype=object)
         confusion_matrix = np.empty((len(classes) + 1, len(classes) + 1), dtype=object)
         confusion_matrix[0][0] = ""
@@ -28,7 +30,30 @@ class ClassifierMetrics:
                 confusion_matrix[row + 1][col + 1] = self.get_value_of_cell(inferences, expected_values,
                                                                             indexes_of_classes[row],
                                                                             indexes_of_classes[col])
+        if heatmap_path is not None:
+            self.plot_confusion_matrix_heatmap(confusion_matrix, heatmap_path)
         return confusion_matrix
+
+    @staticmethod
+    def plot_confusion_matrix_heatmap(confusion_matrix, heatmap_path):
+        fig, ax = plt.subplots()
+        sns.heatmap(np.asarray(confusion_matrix[1:, 1:], dtype=int), annot=True, fmt='d', cmap='Blues', square=True)
+        ax.set_xticks(np.arange(len(confusion_matrix[0, 0:])))
+        ax.set_yticks(np.arange(len(confusion_matrix[0, 0:])))
+        ax.set_xticklabels(confusion_matrix[0, 0:])
+        ax.set_yticklabels(confusion_matrix[0, 0:])
+
+        plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+                 rotation_mode="anchor")
+
+        plt.setp(ax.get_yticklabels(), rotation=0, ha="right",
+                 rotation_mode="anchor")
+
+        ax.set_title("Confusion Matrix")
+        ax.set_ylabel('Ground Truth label')
+        ax.set_xlabel('Predicted label')
+        fig.tight_layout()
+        plt.savefig(heatmap_path + "/confusion_matrix_heatmap.png", format="png")
 
     @staticmethod
     def get_value_of_cell(inferences, expected_values, actual_class, current_classification):
@@ -138,12 +163,12 @@ class ClassifierMetrics:
                 class_row = row
         return class_row
 
-    def calculate_all_metrics(self, inferences, expected_values, classes_dict):
+    def calculate_all_metrics(self, inferences, expected_values, classes_dict, output_folder=None):
         classes = []
         for current_class in classes_dict:
             classes.append(current_class)
         self.classes = classes
-        self.confusion_matrix = self.calculate_confusion_matrix(inferences, expected_values, classes)
+        self.confusion_matrix = self.calculate_confusion_matrix(inferences, expected_values, classes, output_folder)
         self.estimated_classifier_error = self.calculate_classifier_error(self.confusion_matrix)
         self.estimated_classifier_error_relative = self.calculate_classifier_error_relaitve(self.confusion_matrix)
         for current_class in classes:
