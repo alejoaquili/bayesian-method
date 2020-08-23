@@ -33,11 +33,11 @@ def transform_news_dataset(matrix, news_categories, output_file=None):
             count += 1
 
     if output_file is not None:
-        np.savetxt(output_file, np.asarray(processed_matrix, dtype=object), delimiter=",", fmt='%s')
+        np.savetxt(output_file, np.asarray(processed_matrix, dtype=object), delimiter="\t", fmt='%s')
     return processed_matrix
 
 
 def load_transformed_news_dataset(file_path):
-    matrix = pd.read_csv(file_path).to_numpy()
+    matrix = pd.read_csv(file_path, delimiter="\t").to_numpy()
     titles = ['fecha', 'titular', 'fuente', 'categoria']
     return titles, matrix

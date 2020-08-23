@@ -20,7 +20,7 @@ class TokenCounter:
                     self.total_words += 1
 
     @staticmethod
-    def tokenize(text, words_to_ignore=None):
+    def tokenize_string(text, words_to_ignore=None):
         words = []
         for word in text.split():
             current_word = str.lower(re.sub('[^a-zA-Z ]+', '', word))

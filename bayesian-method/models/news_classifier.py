@@ -46,8 +46,8 @@ class NewsClassifier:
         if expected_classes is None and generate_metrics:
             raise ValueError('Cannot generate metrics of a unsupervised classification')
 
-        rows = news_matrix.shape[0]
-        columns = news_matrix.shape[1] - 1
+        rows = len(news_matrix)
+        columns = len(news_matrix[0])
         inferences = []
         for current_class in self.probabilities_of_classes.keys():
             probabilities_for_new = [self.calculate_probability_of_titles(current_class, news_matrix[:, 1])]
@@ -58,8 +58,8 @@ class NewsClassifier:
             max_probability_class = None
             for current_class in self.probabilities_of_classes.keys():
                 current_probability = self.probabilities_for_classes[current_class][row][0] * \
-                                      self.probabilities_for_classes[current_class][row][1] * \
                                       self.probabilities_of_classes[current_class]
+                                      # self.probabilities_for_classes[current_class][row][1] * \
                 if current_probability > max_probability:
                     max_probability = current_probability
                     max_probability_class = current_class
@@ -88,7 +88,7 @@ class NewsClassifier:
         current_class_words_quantity = self.tokenizer_of_classes[current_class].total_words
         probability_of_titles = []
         for title in titles:
-            title_words = TokenCounter.tokenize(title[0]) # TODO: add words to ignore
+            title_words = TokenCounter.tokenize_string(title) # TODO: add words to ignore
             probability_of_title = 1
             for word in title_words: # TODO: add words to ignore
                 word_frequency = 0
