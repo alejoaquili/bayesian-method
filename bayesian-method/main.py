@@ -26,6 +26,19 @@ news_classifier.train(training_news)
 result, metrics = news_classifier.classify(test_news, test_target, True)
 print(result)
 print(metrics.confusion_matrix)
+print(metrics.estimated_classifier_error)
+print(metrics.estimated_classifier_error_relative)
+print(metrics.true_positives_rate)
+print(metrics.false_positives_rate)
+print(metrics.recall)
+print(metrics.accuracy)
+print(metrics.precision)
+print(metrics.f1_score)
+print(metrics.matthews_correlation_coefficient)
+
+
+
+
 
 # print(news_classifier.classify(np.asarray([["10/10/10","Los cambios en las notificaciones de WhatsApp que le pueden generar un dolor de cabeza a los usuarios", "TycSports"]]), ["Deportes"]))
 # TODO: metric, source, ignore words.
