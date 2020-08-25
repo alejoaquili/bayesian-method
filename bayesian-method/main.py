@@ -23,7 +23,7 @@ training_news = np.append(training_news, extra_column, axis=1)
 news_classifier.train(training_news)
 # result = news_classifier.classify(test_news, test_target)
 # print(result)
-result, metrics = news_classifier.classify(test_news, test_target, True)
+result, metrics = news_classifier.classify(test_news, test_target, True, "../output", False)
 print(result)
 print(metrics.confusion_matrix)
 print(metrics.estimated_classifier_error)
@@ -35,6 +35,7 @@ print(metrics.accuracy)
 print(metrics.precision)
 print(metrics.f1_score)
 print(metrics.matthews_correlation_coefficient)
+print(metrics.roc_point)
 
 
 
