@@ -40,7 +40,7 @@ class NewsClassifier:
         # TODO: process news sources too
         self.trained = True
 
-    def classify(self, news_matrix, expected_classes=None, generate_metrics=False):
+    def classify(self, news_matrix, expected_classes=None, generate_metrics=False, use_sources=False):
         if not self.trained:
             raise Exception('Cannot classify without training')
 
@@ -52,7 +52,8 @@ class NewsClassifier:
         inferences = []
         for current_class in self.probabilities_of_classes.keys():
             probabilities_for_news = [self.calculate_probability_of_titles(current_class, news_matrix[:, 1])]
-            # probabilities_for_new.append(self.calculate_probability_of_source(current_class, news_matrix[:, 1]))
+            if use_sources:
+                probabilities_for_news.append(self.calculate_probability_of_source(current_class, news_matrix[:, 1]))
             self.probabilities_for_classes[current_class] = probabilities_for_news
         for row in range(0, rows):
             max_probability = 0
@@ -60,7 +61,7 @@ class NewsClassifier:
             for current_class in self.probabilities_of_classes.keys():
                 current_probability = self.probabilities_for_classes[current_class][0][row] * \
                                       self.probabilities_of_classes[current_class]
-                                      # self.probabilities_for_classes[current_class][row][1] * \
+                                      # self.probabilities_for_classes[current_class][1][row] * \
                 if current_probability > max_probability:
                     max_probability = current_probability
                     max_probability_class = current_class
@@ -103,3 +104,20 @@ class NewsClassifier:
                 probability_of_title *= probability_of_word
             probability_of_titles.append(probability_of_title)
         return probability_of_titles
+
+    def calculate_probability_of_titles(self, current_class, titles):
+        current_class_words_frequencies = self.tokenizer_of_classes[current_class].word_frequencies
+        current_class_words_quantity = self.tokenizer_of_classes[current_class].total_words
+        probability_of_titles = []
+        for title in titles:
+            title_words = TokenCounter.tokenize_string(title)  # TODO: add words to ignore
+            probability_of_title = 1
+            for word in title_words:  # TODO: add words to ignore
+                word_frequency = 0
+                if word in current_class_words_frequencies:
+                    word_frequency = current_class_words_frequencies[word]
+                probability_of_word = (word_frequency + 1) / (current_class_words_quantity + self.class_quantity)
+                probability_of_title *= probability_of_word
+            probability_of_titles.append(probability_of_title)
+        return probability_of_titles
+
