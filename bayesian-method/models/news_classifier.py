@@ -20,7 +20,7 @@ class NewsClassifier:
         self.probabilities_for_classes = {}
         self.sources_for_classes = {}
 
-    def train(self, training_matrix):
+    def train(self, training_matrix, ignore_words=False):
         rows = training_matrix.shape[0]
         columns = training_matrix.shape[1] - 1
         sorted_matrix = training_matrix[training_matrix[:, columns].argsort()]
@@ -31,19 +31,19 @@ class NewsClassifier:
         for i in range(1, rows):
             if sorted_matrix[i][columns] != current_class:
                 data_for_class = sorted_matrix[start_row:i, 1:columns]
-                self.process_news_titles(current_class, data_for_class)
+                self.process_news_titles(current_class, data_for_class, ignore_words)
                 self.process_sources(current_class, data_for_class[:, 1])
                 self.probabilities_of_classes[current_class] = (i - start_row) / rows
                 start_row = i
                 current_class = sorted_matrix[i][columns]
         data_for_class = sorted_matrix[start_row:rows, 1:columns]
-        self.process_news_titles(current_class, data_for_class)
+        self.process_news_titles(current_class, data_for_class, ignore_words)
         self.process_sources(current_class, data_for_class[:, 1])
         self.probabilities_of_classes[current_class] = (rows - start_row) / rows
-        # TODO: process news sources too
         self.trained = True
 
-    def classify(self, news_matrix, expected_classes=None, generate_metrics=False, output_path=None, use_sources=False):
+    def classify(self, news_matrix, expected_classes=None, generate_metrics=False, output_path=None, use_sources=False,
+                 ignore_words=False):
         if not self.trained:
             raise Exception('Cannot classify without training')
 
@@ -54,7 +54,8 @@ class NewsClassifier:
         # columns = len(news_matrix[0])
         inferences = []
         for current_class in self.probabilities_of_classes.keys():
-            probabilities_for_news = [self.calculate_probability_of_titles(current_class, news_matrix[:, 1])]
+            probabilities_for_news = [self.calculate_probability_of_titles(current_class, news_matrix[:, 1],
+                                                                           ignore_words)]
             if use_sources:
                 probabilities_for_news.append(self.calculate_probability_of_source(current_class, news_matrix[:, 2]))
             self.probabilities_for_classes[current_class] = probabilities_for_news
@@ -89,29 +90,36 @@ class NewsClassifier:
         self.class_quantity = class_quantity
         return class_quantity
 
-    def process_news_titles(self, current_class, titles):
+    def process_news_titles(self, current_class, titles, ignore_words):
         tokenizer = TokenCounter()
-        tokenizer.tokenize(titles)
+        if ignore_words:
+            tokenizer.tokenize(titles, self.ignored_words)
+        else:
+            tokenizer.tokenize(titles)
         self.tokenizer_of_classes[current_class] = tokenizer
 
     def process_sources(self, current_class, sources):
         sources_map = {}
         for source in sources:
-            if source not in sources_map:
+            lower_source = source.lower()
+            if lower_source not in sources_map:
                 current_count = 0
             else:
-                current_count = sources_map[source]
-            sources_map[source] = current_count + 1
+                current_count = sources_map[lower_source]
+            sources_map[lower_source] = current_count + 1
         self.sources_for_classes[current_class] = sources_map
 
-    def calculate_probability_of_titles(self, current_class, titles):
+    def calculate_probability_of_titles(self, current_class, titles, ignore_words):
         current_class_words_frequencies = self.tokenizer_of_classes[current_class].word_frequencies
         current_class_words_quantity = self.tokenizer_of_classes[current_class].total_words
         probability_of_titles = []
         for title in titles:
-            title_words = TokenCounter.tokenize_string(title) # TODO: add words to ignore
+            if ignore_words:
+                title_words = TokenCounter.tokenize_string(title, self.ignored_words)
+            else:
+                title_words = TokenCounter.tokenize_string(title)
             probability_of_title = 1
-            for word in title_words: # TODO: add words to ignore
+            for word in title_words:
                 word_frequency = 0
                 if word in current_class_words_frequencies:
                     word_frequency = current_class_words_frequencies[word]
@@ -125,9 +133,10 @@ class NewsClassifier:
         sources_quantity = len(sources_map)
         probability_of_sources = []
         for source in sources:
+            lower_source = source.lower()
             source_frequencey = 0
-            if source in sources_map:
-                source_frequencey = sources_map[source]
+            if lower_source in sources_map:
+                source_frequencey = sources_map[lower_source]
             probability_of_source = (source_frequencey + 1) / (sources_quantity + self.class_quantity)
             probability_of_sources.append(probability_of_source)
         return probability_of_sources

@@ -20,10 +20,11 @@ news_classifier = NewsClassifier()
 column = np.transpose
 extra_column = training_target.reshape(len(training_target), 1)
 training_news = np.append(training_news, extra_column, axis=1)
-news_classifier.train(training_news)
+news_classifier.train(training_news, ignore_words=True)
 # result = news_classifier.classify(test_news, test_target)
 # print(result)
-result, metrics = news_classifier.classify(test_news, test_target, True, "../output", False)
+result, metrics = news_classifier.classify(test_news, test_target, generate_metrics=True, output_path="../output",
+                                           use_sources=False, ignore_words=False)
 print(result)
 print(metrics.confusion_matrix)
 print(metrics.estimated_classifier_error)
@@ -36,10 +37,3 @@ print(metrics.precision)
 print(metrics.f1_score)
 print(metrics.matthews_correlation_coefficient)
 print(metrics.roc_point)
-
-
-
-
-
-# print(news_classifier.classify(np.asarray([["10/10/10","Los cambios en las notificaciones de WhatsApp que le pueden generar un dolor de cabeza a los usuarios", "TycSports"]]), ["Deportes"]))
-# TODO: metric, source, ignore words.
