@@ -1,4 +1,6 @@
 import numpy as np
+
+from models.bayesian_network import BayesianNetwork
 from utils.data_loader import load_news_dataset, load_transformed_news_dataset, load_binary_dataset, discretize_binary_dataset
 from bayesian_naive_classifier import bayesian_classifier
 from models.news_classifier import NewsClassifier
@@ -53,3 +55,5 @@ from sklearn.model_selection import train_test_split
 titles, matrix = load_binary_dataset("../data/binary.csv")
 matrix = discretize_binary_dataset(titles, matrix)
 print(titles)
+bayesian_network = BayesianNetwork()
+bayesian_network.generate_structure()
