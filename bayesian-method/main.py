@@ -55,5 +55,6 @@ from sklearn.model_selection import train_test_split
 titles, matrix = load_binary_dataset("../data/binary.csv")
 matrix = discretize_binary_dataset(titles, matrix)
 print(titles)
-bayesian_network = BayesianNetwork()
-bayesian_network.generate_structure()
+data_relations = [["rank", ["admit", "gre", "gpa"]], ["gpa", ["admit"]], ["gre", ["admit"]], ["admit", []]]
+bayesian_network = BayesianNetwork(data_relations)
+bayesian_network.generate_structure(data_relations)
