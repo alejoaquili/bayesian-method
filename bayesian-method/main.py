@@ -57,4 +57,3 @@ matrix = discretize_binary_dataset(titles, matrix)
 print(titles)
 data_relations = [["rank", ["admit", "gre", "gpa"]], ["gpa", ["admit"]], ["gre", ["admit"]], ["admit", []]]
 bayesian_network = BayesianNetwork(data_relations)
-bayesian_network.generate_structure(data_relations)

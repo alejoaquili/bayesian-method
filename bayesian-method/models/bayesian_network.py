@@ -4,6 +4,7 @@ from models.node import Node
 class BayesianNetwork:
     def __init__(self, data_relations):
         self.nodes = {}
+        self.generate_structure(data_relations)
 
     def generate_structure(self, data_relations):
         self.create_nodes(data_relations)
