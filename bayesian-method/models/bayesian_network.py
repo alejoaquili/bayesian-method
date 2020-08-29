@@ -32,10 +32,24 @@ class BayesianNetwork:
 
     def calculate_total_generic_condicional_probability(self, variables, values, given_variables, given_values):
         numerator_probability = self.calculate_total_generic_probability(variables, values)
-        denominator_probability =  self.calculate_total_generic_probability(given_variables, given_values)
+        denominator_probability = self.calculate_total_generic_probability(given_variables, given_values)
         if numerator_probability is not None and denominator_probability is not None:
             return numerator_probability / denominator_probability
         return None
+
+    # def calculate_total_generic_probability(self, variables, values):
+    #     dependant_variables = self.get_dependant_variables(variables)
+    #     specified_variables = []
+    #     specified_values = []
+    #     for i in range(0, len(variables)):
+    #         if variables[i] in dependant_variables:
+    #             specified_variables.append(variables[i])
+    #             specified_values.append([values[i]])
+    #             dependant_variables.remove(variables[i])
+    #     for node_name in dependant_variables:
+    #         specified_variables.append(node_name)
+    #         specified_values.append(self.nodes[node_name].values)
+    #     return self.calculate_total_probability(specified_variables, specified_values)
 
     def calculate_total_generic_probability(self, variables, values):
         specified_variables = []
@@ -53,6 +67,20 @@ class BayesianNetwork:
                 specified_variables.append(node_name)
                 specified_values.append(self.nodes[node_name].values)
         return self.calculate_total_probability(specified_variables, specified_values)
+
+    def get_dependant_variables(self, variables):
+        dependants_set = set()
+        last_size = -1
+        size = 0
+        while size > last_size:
+            last_size = size
+            for variable in variables:
+                current_node = self.nodes[variable]
+                dependants_set.add(variable)
+                for parent_name in current_node.parents.keys():
+                    dependants_set.add(parent_name)
+            size = len(dependants_set)
+        return dependants_set
 
     def calculate_total_probability(self, variables, values):
         keys = []
