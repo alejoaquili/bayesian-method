@@ -36,13 +36,46 @@ class ClassifierMetrics:
         self.plot_confusion_matrix_heatmap(confusion_matrix, heatmap_path)
         return confusion_matrix
 
-    def calculate_general_roc_curve(self, expected_values, classes, probability_for_classes):
+    def calculate_general_roc_curve(self, expected_values, classes, probability_for_classes, out_path=None):
         thresholds_total = 10
-        for i in range(1, thresholds_total + 1):
-            threshold = i * 0.1
-            false_positive, true_positive = self.calculate_general_roc_point(expected_values, classes, probability_for_classes, threshold)
-            self.general_roc_points.append([false_positive, true_positive])
+        for current_class in classes:
+            class_roc_points = []
+            for i in range(1, thresholds_total + 1):
+                threshold = i * 0.1
+                false_positive_rate, true_positive_rate = self.calculate_general_roc_point_for_class(expected_values,
+                                                            current_class, classes, probability_for_classes, threshold)
+                class_roc_points.append([false_positive_rate, true_positive_rate])
+            self.plot_threshold_roc_curve(class_roc_points, current_class, out_path)
 
+    def calculate_general_roc_point_for_class(self, expected_values, current_class, classes, probability_for_classes, threshold):
+        # true positives = TP / TP + FN
+        # false positives = FP / FP + TN
+        true_positives = 0
+        false_positives = 0
+        true_negatives = 0
+        false_negatives = 0
+        for i in range(0, len(expected_values)):
+            total = self.get_total_probability_for_row(i, classes, probability_for_classes)
+            normalized_probability = probability_for_classes[current_class][0][i] / total
+            if normalized_probability >= threshold:
+                if expected_values[i] == current_class:
+                    true_positives += 1
+                else:
+                    false_positives += 1
+            else:
+                if expected_values[i] == current_class:
+                    false_negatives += 1
+                else:
+                    true_negatives += 1
+        false_positives_rate = false_positives / (true_negatives + false_positives)
+        true_positives_rate = true_positives / (true_positives + false_negatives)
+        return false_positives_rate, true_positives_rate
+
+    def get_total_probability_for_row(self, row_index, classes, probability_for_classes):
+        total = 0
+        for current_class in classes:
+            total += probability_for_classes[current_class][0][row_index]
+        return total
 
     @staticmethod
     def calculate_general_roc_point(expected_values, classes, probability_for_classes, threshold):
@@ -82,6 +115,7 @@ class ClassifierMetrics:
             plt.savefig(heatmap_path + "/confusion_matrix_heatmap.png", format="png")
         else:
             plt.show()
+        plt.close('all')
 
     @staticmethod
     def get_value_of_cell(inferences, expected_values, actual_class, current_classification):
@@ -211,9 +245,10 @@ class ClassifierMetrics:
             plt.savefig(curve_path + "/{} - ROC Curve.png".format(current_class), format="png")
         else:
             plt.show()
+        plt.close('all')
 
     @staticmethod
-    def plot_general_roc_curve(roc_points, curve_path=None):
+    def plot_threshold_roc_curve(roc_points, current_class, curve_path=None):
         values = np.asarray(roc_points)
         x_values = np.zeros(1)
         x_values = np.hstack((x_values, values[:, 0]))
@@ -221,22 +256,22 @@ class ClassifierMetrics:
         y_values = np.zeros(1)
         y_values = np.hstack((y_values, values[:, 1]))
         y_values = np.hstack((y_values, np.ones(1)))
-        x_values = np.zeros(10)
-        y_values = np.zeros(10)
-        x_values[9] = 1
-        y_values[9] = 1
-        for i in range(0, 8):
-            x_values[i + 1] = 1 - 0.1 * i
-            y_values[i + 1] = 0.1 * i
+        # x_values = np.zeros(10)
+        # y_values = np.zeros(10)
+        # x_values[9] = 1
+        # y_values[9] = 1
+        # for i in range(0, 8):
+        #     x_values[i + 1] = 1 - 0.1 * i
+        #     y_values[i + 1] = 0.1 * i
         print("debug here Alejin")
         auc = trapz(y_values, x_values)
-        legend = "ROC Curve (AUC = {:.4f})".format(auc)
+        legend = "{class_name} ROC Curve (AUC = {auc:.4f})".format(class_name=current_class, auc=auc)
         fig, ax = plt.subplots()
-        labels = []
-        for i in range(0, 10):
-            labels.append("{:.1f}".format((i + 1) / 10))
-        for i in range(0, len(labels)):
-            ax.annotate(labels[i], (x_values[i], y_values[i]))
+        # labels = []
+        # for i in range(0, 10):
+        #     labels.append("{:.1f}".format((i + 1) / 10))
+        # for i in range(0, len(labels)):
+        #     ax.annotate(labels[i], (x_values[i], y_values[i]))
         plt.plot([(0, 0), (1, 1)], color='black', linewidth=1, linestyle='--')
         plt.plot(x_values, y_values, color='blue', linewidth=1, label=legend)
         plt.scatter(x_values, y_values, marker='o', s=30, facecolor='blue', edgecolor='blue')
@@ -248,9 +283,10 @@ class ClassifierMetrics:
         plt.grid()
         plt.legend(loc="lower right")
         if curve_path is not None:
-            plt.savefig(curve_path + "/General-ROC-Curve.png", format="png")
+            plt.savefig(curve_path + "/" + current_class + "-threshold-ROC-Curve.png", format="png")
         else:
             plt.show()
+        plt.close('all')
 
     def calculate_all_metrics(self, inferences, expected_values, classes_dict, probabilities_for_classes,
                               output_folder=None):
@@ -275,7 +311,6 @@ class ClassifierMetrics:
             self.roc_point[current_class] = (self.false_positives_rate[current_class],
                                              self.true_positives_rate[current_class])
             self.plot_roc_curves(self.roc_point[current_class], current_class, output_folder)
-            self.calculate_general_roc_curve(expected_values, classes, probabilities_for_classes)
-            self.plot_general_roc_curve(self.general_roc_points, output_folder)
+            self.calculate_general_roc_curve(expected_values, classes, probabilities_for_classes, output_folder)
 
 
