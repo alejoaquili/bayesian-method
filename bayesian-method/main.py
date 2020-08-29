@@ -58,11 +58,19 @@ matrix = discretize_binary_dataset(titles, matrix)
 data_relations = [["rank", ["admit", "gre", "gpa"], [1, 2, 3, 4]], ["gpa", ["admit"], [0, 1]],
                   ["gre", ["admit"], [0, 1]], ["admit", [], [0, 1]]]
 bayesian_network = BayesianNetwork(data_relations, matrix, titles)
-total = 0
-for i in range(0, 4):
-    probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "admit"], [1, 1], ["rank"], [i + 1])
-    print(probability)
-    total += probability
-print(total)
+# total = 0
+# for i in range(0, 4):
+#     probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "admit"], [(i + 1), 1], ["rank"], [i + 1])
+#     print(probability)
+#     total += probability
+#     print(total)
+
+    #   1
+#     probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "admit"], [1, 1], ["rank"], [1])
+
+probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "gre", "gpa", "admit"],
+                                                                               [2, 0, 1, 1], ["rank", "gre", "gpa"],
+                                                                               [2, 0, 1])
+print(probability)
 
 
