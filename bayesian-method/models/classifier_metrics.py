@@ -190,7 +190,6 @@ class ClassifierMetrics:
         error = np.sum(confusion_matrix[1:, 1:])
         for i in range(1, len(confusion_matrix)):
             error -= confusion_matrix[i][i]
-        print("Error calculated")
         return error
 
     @staticmethod
@@ -263,7 +262,6 @@ class ClassifierMetrics:
         # for i in range(0, 8):
         #     x_values[i + 1] = 1 - 0.1 * i
         #     y_values[i + 1] = 0.1 * i
-        print("debug here Alejin")
         auc = trapz(y_values, x_values)
         legend = "{class_name} ROC Curve (AUC = {auc:.4f})".format(class_name=current_class, auc=auc)
         fig, ax = plt.subplots()

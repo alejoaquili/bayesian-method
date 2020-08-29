@@ -46,14 +46,8 @@ class Node:
             if key in self.conditional_probabilities:
                 matches = self.conditional_probabilities[key]
             # TODO maybe add laplace corrector
-            self.conditional_probabilities[key] = (matches + 1) / (len(data_set) + 2)
+            self.conditional_probabilities[key] = (matches + 1) / (len(data_set) + 4)
             # self.conditional_probabilities[key] = matches / len(data_set)
-
-        # total = 0
-        # for key in result_keys:
-        #     if key in self.conditional_probabilities:
-        #         total += self.conditional_probabilities[key]
-        # print(total)
 
     def get_conditional_probability(self, term_variables, term_values):
         variables = []

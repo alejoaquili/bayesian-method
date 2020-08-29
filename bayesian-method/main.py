@@ -1,7 +1,8 @@
 import numpy as np
 
 from models.bayesian_network import BayesianNetwork
-from utils.data_loader import load_news_dataset, load_transformed_news_dataset, load_binary_dataset, discretize_binary_dataset
+from utils.data_loader import load_news_dataset, load_transformed_news_dataset, load_binary_dataset, \
+    discretize_binary_dataset, transform_news_dataset, load_person_preferences
 from bayesian_naive_classifier import bayesian_classifier
 from models.news_classifier import NewsClassifier
 from sklearn.model_selection import train_test_split
@@ -10,8 +11,8 @@ from sklearn.model_selection import train_test_split
 ########################################################################################################################
 # Ej 2
 
-#titles, training_matrix = load_person_preferences("../data/PreferenciasBritanicos.csv")
-#print(bayesian_classifier(training_matrix, [[1, 0, 1, 1, 0], [0, 0, 1, 1, 1]], [1, 1, 1, 1, 1]))
+titles, training_matrix = load_person_preferences("../data/PreferenciasBritanicos.csv")
+print(bayesian_classifier(training_matrix, [[1, 0, 1, 1, 0], [0, 0, 1, 1, 1]], [1, 1, 1, 1, 1]))
 
 # titles, news_data = load_news_dataset("../data/Noticias_argentinas.xlsx")
 # transform_news_dataset(news_data, ["Internacional", "Deportes", "Ciencia y Tecnologia", "Economia"],
@@ -51,30 +52,30 @@ from sklearn.model_selection import train_test_split
 
 ########################################################################################################################
 # Ej 4
-
-titles, matrix = load_binary_dataset("../data/binary.csv")
-matrix = discretize_binary_dataset(titles, matrix)
-# print(titles)
-data_relations = [["rank", ["admit", "gre", "gpa"], [1, 2, 3, 4]], ["gpa", ["admit"], [0, 1]],
-                  ["gre", ["admit"], [0, 1]], ["admit", [], [0, 1]]]
-bayesian_network = BayesianNetwork(data_relations, matrix, titles)
-# total = 0
-# for i in range(0, 4):
-#     probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "admit"], [(i + 1), 1], ["rank"], [i + 1])
-#     print(probability)
-#     total += probability
-#     print(total)
-
-#   1
-probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "admit"], [1, 1], ["rank"], [1])
-print(probability)
-probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "gre", "gpa", "admit"],
-                                                                               [2, 0, 1, 1], ["rank", "gre", "gpa"],
-                                                                               [2, 0, 1])
-print(probability)
-
-
-#test
-probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "gre"], [1, 1], ["rank"], [1])
-print(probability)
+#
+# titles, matrix = load_binary_dataset("../data/binary.csv")
+# matrix = discretize_binary_dataset(titles, matrix)
+# # print(titles)
+# data_relations = [["rank", ["admit", "gre", "gpa"], [1, 2, 3, 4]], ["gpa", ["admit"], [0, 1]],
+#                   ["gre", ["admit"], [0, 1]], ["admit", [], [0, 1]]]
+# bayesian_network = BayesianNetwork(data_relations, matrix, titles)
+# # total = 0
+# # for i in range(0, 4):
+# #     probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "admit"], [(i + 1), 1], ["rank"], [i + 1])
+# #     print(probability)
+# #     total += probability
+# #     print(total)
+#
+# #   1
+# probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "admit"], [1, 1], ["rank"], [1])
+# print(probability)
+# probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "gre", "gpa", "admit"],
+#                                                                                [2, 0, 1, 1], ["rank", "gre", "gpa"],
+#                                                                                [2, 0, 1])
+# print(probability)
+#
+#
+# #test
+# probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "gre"], [1, 1], ["rank"], [1])
+# print(probability)
 
