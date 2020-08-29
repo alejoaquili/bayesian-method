@@ -20,7 +20,7 @@ from sklearn.model_selection import train_test_split
 
 ########################################################################################################################
 # Ej 3
-
+#
 # titles, news_data = load_transformed_news_dataset("../data/transformed_news.tsv")
 # train_matrix = news_data[:, :3]
 # categories = news_data[:, 3]
@@ -55,5 +55,8 @@ from sklearn.model_selection import train_test_split
 titles, matrix = load_binary_dataset("../data/binary.csv")
 matrix = discretize_binary_dataset(titles, matrix)
 print(titles)
-data_relations = [["rank", ["admit", "gre", "gpa"]], ["gpa", ["admit"]], ["gre", ["admit"]], ["admit", []]]
-bayesian_network = BayesianNetwork(data_relations)
+data_relations = [["rank", ["admit", "gre", "gpa"], [1, 2, 3, 4]], ["gpa", ["admit"], [0, 1]],
+                  ["gre", ["admit"], [0, 1]], ["admit", [], [0, 1]]]
+bayesian_network = BayesianNetwork(data_relations, matrix, titles)
+
+

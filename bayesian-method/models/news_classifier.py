@@ -74,7 +74,7 @@ class NewsClassifier:
         if generate_metrics:
             metrics = ClassifierMetrics()
             metrics.calculate_all_metrics(inferences, expected_classes, self.probabilities_of_classes.keys(),
-                                          output_folder=output_path)
+                                          self.probabilities_for_classes, output_folder=output_path)
             return inferences, metrics
         return inferences
 
@@ -134,10 +134,10 @@ class NewsClassifier:
         probability_of_sources = []
         for source in sources:
             lower_source = source.lower()
-            source_frequencey = 0
+            source_frequency = 0
             if lower_source in sources_map:
-                source_frequencey = sources_map[lower_source]
-            probability_of_source = (source_frequencey + 1) / (sources_quantity + self.class_quantity)
+                source_frequency = sources_map[lower_source]
+            probability_of_source = (source_frequency + 1) / (sources_quantity + self.class_quantity)
             probability_of_sources.append(probability_of_source)
         return probability_of_sources
 
