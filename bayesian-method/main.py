@@ -3,7 +3,7 @@ import numpy as np
 from models.bayesian_network import BayesianNetwork
 from utils.data_loader import load_news_dataset, load_transformed_news_dataset, load_binary_dataset, \
     discretize_binary_dataset, transform_news_dataset, load_person_preferences
-from bayesian_naive_classifier import bayesian_classifier
+from bayesian_naive_classifier import bayesian_naive_classifier
 from models.news_classifier import NewsClassifier
 from sklearn.model_selection import train_test_split
 
@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 # Ej 2
 
 titles, training_matrix = load_person_preferences("../data/PreferenciasBritanicos.csv")
-print(bayesian_classifier(training_matrix, [[1, 0, 1, 1, 0], [0, 0, 1, 1, 1]], [1, 1, 1, 1, 1]))
+print(bayesian_naive_classifier(training_matrix, [[1, 0, 1, 1, 0], [0, 0, 1, 1, 1]], [1, 1, 1, 1, 1]))
 
 # titles, news_data = load_news_dataset("../data/Noticias_argentinas.xlsx")
 # transform_news_dataset(news_data, ["Internacional", "Deportes", "Ciencia y Tecnologia", "Economia"],

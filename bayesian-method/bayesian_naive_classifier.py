@@ -5,7 +5,7 @@ def equal_comparison(expected_value, current_value):
     return expected_value == current_value
 
 
-def bayesian_classifier(training_matrix, matrix_to_classify, columns_true_values, comparison_function=equal_comparison):
+def bayesian_naive_classifier(training_matrix, matrix_to_classify, columns_true_values, comparison_function=equal_comparison):
     rows = training_matrix.shape[0]
     columns = training_matrix.shape[1] - 1
     sorted_matrix = training_matrix[training_matrix[:, columns].argsort()]
