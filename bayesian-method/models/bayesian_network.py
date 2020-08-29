@@ -30,7 +30,58 @@ class BayesianNetwork:
             current_node = self.nodes[node_name]
             current_node.generate_conditional_probabilities(data_set, titles)
 
-    def calculate_total_probability(self, variables, values):
-        pass
+    def calculate_total_generic_condicional_probability(self, variables, values, given_variables, given_values):
+        numerator_probability = self.calculate_total_generic_probability(variables, values)
+        denominator_probability =  self.calculate_total_generic_probability(given_variables, given_values)
+        if numerator_probability is not None and denominator_probability is not None:
+            return numerator_probability / denominator_probability
+        return None
 
-# P(admit = 0 | rank = 1) = dum valgre sum valgpaP(admit = 0, gre, gpa, rank = 1) / P(admit gre, gpa, rank = 1)
+    def calculate_total_generic_probability(self, variables, values):
+        specified_variables = []
+        specified_values = []
+        for i in range(0, len(variables)):
+            if variables[i] in self.nodes:
+                specified_variables.append(variables[i])
+                specified_values.append([values[i]])
+        for node_name in self.nodes:
+            found = False
+            for variable in variables:
+                if variable == node_name:
+                    found = True
+            if not found:
+                specified_variables.append(node_name)
+                specified_values.append(self.nodes[node_name].values)
+        return self.calculate_total_probability(specified_variables, specified_values)
+
+    def calculate_total_probability(self, variables, values):
+        keys = []
+        self.generate_combinated_keys(variables, 0, len(variables), values, [], keys)
+        total_probability = 0
+        for key in keys:
+            total_probability += self.calculate_term_probability(key)
+        return total_probability
+
+    def calculate_term_probability(self, key):
+        variables_info = key.split(",")
+        term_variables = []
+        term_values = []
+        for variable_info in variables_info:
+            variable, value = variable_info.split("-")
+            term_variables.append(variable)
+            term_values.append(int(value))
+        probability = 1
+        for node_name in self.nodes:
+            current_probability = self.nodes[node_name].get_conditional_probability(term_variables, term_values)
+            if current_probability is not None:
+                probability *= current_probability
+        return probability
+
+    def generate_combinated_keys(self, variables, current_index, size, values, values_for_variables, keys):
+        if size == current_index:
+            keys.append(Node.generate_key_with_values(variables, values_for_variables))
+        else:
+            for current_value in values[current_index]:
+                values_for_variables.append(current_value)
+                self.generate_combinated_keys(variables, current_index + 1, size,  values, values_for_variables, keys)
+                del values_for_variables[-1]

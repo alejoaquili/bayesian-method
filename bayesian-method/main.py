@@ -54,9 +54,15 @@ from sklearn.model_selection import train_test_split
 
 titles, matrix = load_binary_dataset("../data/binary.csv")
 matrix = discretize_binary_dataset(titles, matrix)
-print(titles)
+# print(titles)
 data_relations = [["rank", ["admit", "gre", "gpa"], [1, 2, 3, 4]], ["gpa", ["admit"], [0, 1]],
                   ["gre", ["admit"], [0, 1]], ["admit", [], [0, 1]]]
 bayesian_network = BayesianNetwork(data_relations, matrix, titles)
+total = 0
+for i in range(0, 4):
+    probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "admit"], [1, 1], ["rank"], [i + 1])
+    print(probability)
+    total += probability
+print(total)
 
 

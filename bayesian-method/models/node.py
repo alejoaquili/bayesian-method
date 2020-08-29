@@ -22,7 +22,7 @@ class Node:
         all_variables = parents_name_list
         result_keys = []
         self.build_string_key(all_variables, len(all_variables), 0, "", result_keys)
-        print(result_keys)
+        # print(result_keys)
         for row in range(0, len(data_set)):
             for key in result_keys:
                 indexes = []
@@ -49,11 +49,31 @@ class Node:
             self.conditional_probabilities[key] = (matches + 1) / (len(data_set) + 2)
             # self.conditional_probabilities[key] = matches / len(data_set)
 
-        total = 0
-        for key in result_keys:
-            if key in self.conditional_probabilities:
-                total += self.conditional_probabilities[key]
-        print(total)
+        # total = 0
+        # for key in result_keys:
+        #     if key in self.conditional_probabilities:
+        #         total += self.conditional_probabilities[key]
+        # print(total)
+
+    def get_conditional_probability(self, term_variables, term_values):
+        variables = []
+        values = []
+        for i in range(0, len(term_variables)):
+            if self.name == term_variables[i]:
+                variables.append(self.name)
+                values.append(term_values[i])
+        if len(variables) == 0:
+            return None
+        for i in range(0, len(term_variables)):
+            current_variable = term_variables[i]
+            if current_variable in self.parents:
+                variables.append(current_variable)
+                values.append(term_values[i])
+        key = self.generate_key_with_values(variables, values)
+        if key in self.conditional_probabilities:
+            return self.conditional_probabilities[key]
+        return None
+
 
     @staticmethod
     def get_variable_index(variable, titles):
@@ -68,6 +88,8 @@ class Node:
         sorted_variables.sort()
         key = ""
         for i in range(0, len(sorted_variables)):
+            if i > 0:
+                key += ","
             for j in range(0, len(variables)):
                 if sorted_variables[i] == variables[j]:
                     key += "{variable}-{value}".format(variable=variables[j], value=values[j])
