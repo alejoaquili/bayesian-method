@@ -30,7 +30,7 @@ class BayesianNetwork:
             current_node = self.nodes[node_name]
             current_node.generate_conditional_probabilities(data_set, titles)
 
-    def calculate_total_generic_condicional_probability(self, variables, values, given_variables, given_values):
+    def calculate_total_generic_conditional_probability(self, variables, values, given_variables, given_values):
         numerator_probability = self.calculate_total_generic_probability(variables, values)
         denominator_probability = self.calculate_total_generic_probability(given_variables, given_values)
         if numerator_probability is not None and denominator_probability is not None:

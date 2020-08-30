@@ -61,21 +61,21 @@ print(bayesian_naive_classifier(training_matrix, [[1, 0, 1, 1, 0], [0, 0, 1, 1, 
 # bayesian_network = BayesianNetwork(data_relations, matrix, titles)
 # # total = 0
 # # for i in range(0, 4):
-# #     probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "admit"], [(i + 1), 1], ["rank"], [i + 1])
+# #     probability = bayesian_network.calculate_total_generic_conditional_probability(["rank", "admit"], [(i + 1), 1], ["rank"], [i + 1])
 # #     print(probability)
 # #     total += probability
 # #     print(total)
 #
 # #   1
-# probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "admit"], [1, 1], ["rank"], [1])
+# probability = bayesian_network.calculate_total_generic_conditional_probability(["rank", "admit"], [1, 1], ["rank"], [1])
 # print(probability)
-# probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "gre", "gpa", "admit"],
+# probability = bayesian_network.calculate_total_generic_conditional_probability(["rank", "gre", "gpa", "admit"],
 #                                                                                [2, 0, 1, 1], ["rank", "gre", "gpa"],
 #                                                                                [2, 0, 1])
 # print(probability)
 #
 #
 # #test
-# probability = bayesian_network.calculate_total_generic_condicional_probability(["rank", "gre"], [1, 1], ["rank"], [1])
+# probability = bayesian_network.calculate_total_generic_conditional_probability(["rank", "gre"], [1, 1], ["rank"], [1])
 # print(probability)
 

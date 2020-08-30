@@ -22,7 +22,6 @@ class Node:
         all_variables = parents_name_list
         result_keys = []
         self.build_string_key(all_variables, len(all_variables), 0, "", result_keys)
-        # print(result_keys)
         for row in range(0, len(data_set)):
             for key in result_keys:
                 indexes = []
@@ -45,9 +44,7 @@ class Node:
             matches = 0
             if key in self.conditional_probabilities:
                 matches = self.conditional_probabilities[key]
-            # TODO maybe add laplace corrector
             self.conditional_probabilities[key] = (matches + 1) / (len(data_set) + 4)
-            # self.conditional_probabilities[key] = matches / len(data_set)
 
     def get_conditional_probability(self, term_variables, term_values):
         variables = []
