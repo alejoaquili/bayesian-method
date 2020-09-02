@@ -255,6 +255,16 @@ class ClassifierMetrics:
         y_values = np.zeros(1)
         y_values = np.hstack((y_values, values[:, 1]))
         y_values = np.hstack((y_values, np.ones(1)))
+        for i in range(0, len(x_values)):
+            for j in range(i+1, len(x_values)):
+                if x_values[j] < x_values[i]:
+                    aux = x_values[i]
+                    x_values[i] = x_values[j]
+                    x_values[j] = aux
+                    aux = y_values[i]
+                    y_values[i] = y_values[j]
+                    y_values[j] = aux
+
         # x_values = np.zeros(10)
         # y_values = np.zeros(10)
         # x_values[9] = 1
